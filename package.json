@@ -55,7 +55,8 @@
   },
   "activationEvents": [
     "onDebug",
-    "onCommand:iotjs-debug.initialConfigurations"
+    "onCommand:iotjs-debug.initialConfigurations",
+    "onCommand:iotjs-debug.getProgramName"
   ],
   "main": "./out/extension.js",
   "files": [
@@ -113,6 +114,11 @@
                 "type": "boolean",
                 "description": "Allowes to log debug messages to the console.",
                 "default": false
+              },
+              "program": {
+                "type": "string",
+                "description": "Absolute path to file. Leave it blank if you started server in normal mode.",
+                "default": "${command:AskForProgramName}"
               }
             }
           }
@@ -129,10 +135,14 @@
               "port": 5001,
               "localRoot": "${workspaceRoot}",
               "stopOnEntry": false,
-              "debugLog": false
+              "debugLog": false,
+              "program": "^\"\\${command:AskForProgramName}\""
             }
           }
-        ]
+        ],
+        "variables": {
+          "AskForProgramName": "iotjs-debug.getProgramName"
+        }
       }
     ]
   }

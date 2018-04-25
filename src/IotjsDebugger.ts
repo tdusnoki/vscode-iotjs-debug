@@ -138,11 +138,29 @@ class IotjsDebugSession extends LoggingDebugSession {
       this.sendEvent(new TerminatedEvent());
     };
 
+    const onWaitForSource = () => {
+      this.log('onWaitForSource');
+      if (args.program !== '') {
+        if (Fs.existsSync(`${args.localRoot}/${args.program}`)) {
+          const content = Fs.readFileSync(`${args.localRoot}/${args.program}`, {
+            encoding: 'utf8',
+            flag: 'r'
+          });
+          this._protocolhandler.sendClientSource(args.program, content);
+        } else {
+          this.sendErrorResponse(response, 0, 'You must provide a valid path to source');
+        }
+      } else {
+        this.sendErrorResponse(response, 0, 'You must provide a source');
+      }
+    };
+
     const protocolDelegate = <JerryDebugProtocolDelegate>{
       onBacktrace,
       onBreakpointHit,
       onResume,
-      onScriptParsed
+      onScriptParsed,
+      onWaitForSource
     };
 
     this._protocolhandler = new JerryDebugProtocolHandler(protocolDelegate, message => this.log(message));
